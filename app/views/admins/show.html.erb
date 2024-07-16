@@ -1,0 +1,35 @@
+<h1><%= @admin.name %>'s Dashboard</h1>
+
+<p>Wallet Balance: <%= number_to_currency(@admin.wallet_balance) %></p>
+
+<h2>Loan Requests</h2>
+<% @loan_requests.each do |loan| %>
+  <div>
+    <p>User: <%= loan.user.name %></p>
+    <p>Amount: <%= number_to_currency(loan.amount) %></p>
+    <%= form_with(model: loan, url: admin_loan_path(@admin, loan), method: :patch, local: true) do |f| %>
+      <%= f.label :interest_rate %>
+      <%= f.number_field :interest_rate, step: 0.01 %>
+      <%= f.hidden_field :status, value: 'approved' %>
+      <%= f.submit 'Approve Loan' %>
+    <% end %>
+  </div>
+<% end %>
+
+<h2>Active Loans</h2>
+<% @active_loans.each do |loan| %>
+  <div>
+    <p>User: <%= loan.user.name %></p>
+    <p>Amount: <%= number_to_currency(loan.amount) %></p>
+    <p>Interest Rate: <%= number_to_percentage(loan.interest_rate, precision: 2) %></p>
+  </div>
+<% end %>
+
+<h2>Repaid Loans</h2>
+<% @repaid_loans.each do |loan| %>
+  <div>
+    <p>User: <%= loan.user.name %></p>
+    <p>Amount: <%= number_to_currency(loan.amount) %></p>
+    <p>Interest Rate: <%= number_to_percentage(loan.interest_rate, precision: 2) %></p>
+  </div>
+<% end %>

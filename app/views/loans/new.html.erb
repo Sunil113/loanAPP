@@ -1,0 +1,23 @@
+<h1>Request New Loan</h1>
+
+<%= form_with(model: [@user, @loan], local: true) do |f| %>
+  <% if @loan.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@loan.errors.count, "error") %> prohibited this loan from being saved:</h2>
+      <ul>
+        <% @loan.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :amount %>
+    <%= f.number_field :amount, step: 0.01 %>
+  </div>
+
+  <%= f.hidden_field :status, value: 'requested' %>
+
+  <%= f.submit 'Request Loan' %>
+<% end %>

@@ -1,0 +1,30 @@
+<h1><%= @user.name %>'s Dashboard</h1>
+
+<p>Wallet Balance: <%= number_to_currency(@user.wallet_balance) %></p>
+
+<h2>Loan Requests</h2>
+<%= link_to 'Request New Loan', new_user_loan_path(@user) %>
+
+<h2>Current Loans</h2>
+<% @user.loans.where(status: [:requested, :approved, :open]).each do |loan| %>
+  <div>
+    <p>Amount: <%= number_to_currency(loan.amount) %></p>
+    <p>Status: <%= loan.status.capitalize %></p>
+    <p>Interest Rate: <%= number_to_percentage(loan.interest_rate, precision: 2) %></p>
+    <% if loan.status == 'approved' %>
+      <%= button_to 'Accept Loan', user_loan_path(@user, loan), method: :patch, params: { loan: { status: 'open' } } %>
+      <%= button_to 'Reject Loan', user_loan_path(@user, loan), method: :patch, params: { loan: { status: 'rejected' } } %>
+    <% elsif loan.status == 'open' %>
+      <%= button_to 'Repay Loan', user_loan_path(@user, loan), method: :patch, params: { loan: { status: 'closed' } } %>
+    <% end %>
+  </div>
+<% end %>
+
+<h2>Previous Loans</h2>
+<% @user.loans.where(status: [:closed, :rejected]).each do |loan| %>
+  <div>
+    <p>Amount: <%= number_to_currency(loan.amount) %></p>
+    <p>Status: <%= loan.status.capitalize %></p>
+    <p>Interest Rate: <%= number_to_percentage(loan.interest_rate, precision: 2) %></p>
+  </div>
+<% end %>

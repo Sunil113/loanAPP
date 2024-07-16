@@ -1,0 +1,39 @@
+<h1>Loan Details</h1>
+
+<p>User: <%= @loan.user.name %></p>
+<p>Amount: <%= number_to_currency(@loan.amount) %></p>
+<p>Interest Rate: <%= number_to_percentage(@loan.interest_rate, precision: 2) %></p>
+<p>Status: <%= @loan.status.capitalize %></p>
+
+<% if @loan.status == 'requested' && current_user.is_a?(Admin) %>
+  <%= form_with(model: @loan, url: admin_loan_path(@loan.admin, @loan), method: :patch, local: true) do |f| %>
+    <%= f.label :interest_rate %>
+    <%= f.number_field :interest_rate, step: 0.01 %>
+    <%= f.hidden_field :status, value: 'approved' %>
+    <%= f.submit 'Approve Loan' %>
+  <% end %>
+
+  <%= form_with(model: @loan, url: admin_loan_path(@loan.admin, @loan), method: :patch, local: true) do |f| %>
+    <%= f.hidden_field :status, value: 'rejected' %>
+    <%= f.submit 'Reject Loan' %>
+  <% end %>
+<% end %>
+
+<% if @loan.status == 'approved' && current_user == @loan.user %>
+  <%= form_with(model: @loan, url: user_loan_path(@loan.user, @loan), method: :patch, local: true) do |f| %>
+    <%= f.hidden_field :status, value: 'open' %>
+    <%= f.submit 'Accept Loan' %>
+  <% end %>
+
+  <%= form_with(model: @loan, url: user_loan_path(@loan.user, @loan), method: :patch, local: true) do |f| %>
+    <%= f.hidden_field :status, value: 'rejected' %>
+    <%= f.submit 'Reject Loan' %>
+  <% end %>
+<% end %>
+
+<% if @loan.status == 'open' && current_user == @loan.user %>
+  <%= form_with(model: @loan, url: user_loan_path(@loan.user, @loan), method: :patch, local: true) do |f| %>
+    <%= f.hidden_field :status, value: 'closed' %>
+    <%= f.submit 'Repay Loan' %>
+  <% end %>
+<% end %>

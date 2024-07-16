@@ -1,0 +1,22 @@
+<h1>Users</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Wallet Balance</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @users.each do |user| %>
+      <tr>
+        <td><%= user.name %></td>
+        <td><%= user.email %></td>
+        <td><%= number_to_currency(user.wallet_balance) %></td>
+        <td><%= link_to 'View', user_path(user) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
